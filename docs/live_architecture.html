@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Supply Chain RL Architecture</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px #4CAF50; }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 20px #4CAF50, 0 0 30px #4CAF50; }
+        }
+        
+        .architecture-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .component {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px;
+            display: inline-block;
+            vertical-align: top;
+            width: 280px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .component:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(33, 150, 243, 0.5);
+        }
+        
+        .component-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #4CAF50;
+        }
+        
+        .truck {
+            display: inline-block;
+            font-size: 1.5em;
+            animation: move 3s ease-in-out infinite;
+            margin: 5px;
+        }
+        
+        @keyframes move {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(20px); }
+        }
+        
+        .message {
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+            margin: 2px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        
+        .data-flow {
+            font-size: 0.9em;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #FF9800;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 2s ease-in-out infinite;
+        }
+        
+        .status-green { background: #4CAF50; }
+        .status-blue { background: #2196F3; }
+        .status-orange { background: #FF9800; }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4CAF50;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4CAF50;
+            animation: countUp 2s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #FF9800;
+            animation: flow 2s ease-in-out infinite;
+            margin: 0 10px;
+        }
+        
+        @keyframes flow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        
+        .live-log {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 8px;
+            border-radius: 3px;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .log-entry.new {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .dashboard-preview {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .map-simulation {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 20px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .truck-marker {
+            position: absolute;
+            font-size: 1.2em;
+            animation: truckMove 8s ease-in-out infinite;
+        }
+        
+        .truck1 { top: 20%; left: 10%; animation-delay: 0s; }
+        .truck2 { top: 60%; left: 30%; animation-delay: 2s; }
+        .truck3 { top: 40%; left: 70%; animation-delay: 4s; }
+        
+        @keyframes truckMove {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(50px, -20px); }
+            50% { transform: translate(100px, 10px); }
+            75% { transform: translate(30px, 30px); }
+        }
+        
+        .warehouse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            animation: pulse 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎬 Live Supply Chain RL Architecture 🎬</h1>
+        
+        <div class="architecture-container">
+            <div class="component">
+                <div class="component-title">🚛 IoT Layer</div>
+                <div class="data-flow">
+                    <div class="truck">🚛</div> Truck 1: Moving NE<br>
+                    <span class="status-indicator status-green"></span>GPS: <span id="truck1-lat">34.0522</span>, <span id="truck1-lng">-118.2437</span><br>
+                    <span class="status-indicator status-blue"></span>Inventory: <span id="truck1-inv">45</span> units<br><br>
+                    
+                    <div class="truck">🚛</div> Truck 2: Moving SW<br>
+                    <span class="status-indicator status-green"></span>GPS: <span id="truck2-lat">34.1478</span>, <span id="truck2-lng">-118.1445</span><br>
+                    <span class="status-indicator status-blue"></span>Inventory: <span id="truck2-inv">23</span> units<br><br>
+                    
+                    <div class="truck">🚛</div> Truck 3: Moving N<br>
+                    <span class="status-indicator status-green"></span>GPS: <span id="truck3-lat">33.9425</span>, <span id="truck3-lng">-118.4081</span><br>
+                    <span class="status-indicator status-blue"></span>Inventory: <span id="truck3-inv">67</span> units
+                </div>
+            </div>
+            
+            <span class="flow-arrow">📡→</span>
+            
+            <div class="component">
+                <div class="component-title">📡 MQTT Broker</div>
+                <div class="data-flow">
+                    <div class="message">📨</div> Messages/sec: <span id="msg-rate">1.5</span><br>
+                    <span class="status-indicator status-green"></span>Port 1883: Active<br>
+                    <span class="status-indicator status-blue"></span>Port 9001: WebSocket<br>
+                    <div class="message">🌊</div> Topics: trucks/+/data<br>
+                    <div class="message">⚡</div> Latency: <span id="mqtt-latency">8</span>ms<br>
+                    <div class="message">🔄</div> Queue: <span id="queue-size">3</span> messages
+                </div>
+            </div>
+            
+            <span class="flow-arrow">🤖→</span>
+            
+            <div class="component">
+                <div class="component-title">🤖 Edge Agent</div>
+                <div class="data-flow">
+                    <span class="status-indicator status-green"></span>RL Model: Loaded<br>
+                    <div class="message">🧠</div> Inference: <span id="inference-time">45</span>ms<br>
+                    <div class="message">🎯</div> Last Action: <span id="last-action">Ship</span><br>
+                    <div class="message">📊</div> Decisions/min: <span id="decisions-rate">90</span><br>
+                    <span class="status-indicator status-blue"></span>API Port 8080: Active<br>
+                    <div class="message">⚡</div> TFLite: Ready
+                </div>
+            </div>
+            
+            <span class="flow-arrow">📊→</span>
+            
+            <div class="component">
+                <div class="component-title">📊 Dashboard</div>
+                <div class="data-flow">
+                    <span class="status-indicator status-green"></span>React App: Running<br>
+                    <div class="message">🗺️</div> Map: Live Updates<br>
+                    <div class="message">📋</div> Actions: <span id="total-actions">127</span><br>
+                    <div class="message">🌐</div> WebSocket: Connected<br>
+                    <span class="status-indicator status-blue"></span>Port 3000: Active<br>
+                    <div class="message">🔄</div> Refresh: 2s interval
+                </div>
+            </div>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div>📡 MQTT Messages</div>
+                <div class="metric-value" id="total-messages">1,247</div>
+            </div>
+            <div class="metric-card">
+                <div>🤖 RL Decisions</div>
+                <div class="metric-value" id="total-decisions">127</div>
+            </div>
+            <div class="metric-card">
+                <div>⚡ Avg Latency</div>
+                <div class="metric-value" id="avg-latency">45ms</div>
+            </div>
+            <div class="metric-card">
+                <div>🚛 Active Trucks</div>
+                <div class="metric-value">3/3</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-preview">
+            <h3>🗺️ Live Map Simulation</h3>
+            <div class="map-simulation">
+                <div class="warehouse">🏢</div>
+                <div class="truck-marker truck1">🚛1</div>
+                <div class="truck-marker truck2">🚛2</div>
+                <div class="truck-marker truck3">🚛3</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-preview">
+            <h3>📋 Live Action Log</h3>
+            <div class="live-log" id="action-log">
+                <div class="log-entry">14:32:15 | Truck 1 | Ship ⚡ | Inventory: 45</div>
+                <div class="log-entry">14:32:13 | Truck 3 | Produce 💫 | Inventory: 67</div>
+                <div class="log-entry">14:32:11 | Truck 2 | Hold 🔄 | Inventory: 23</div>
+                <div class="log-entry">14:32:09 | Truck 1 | Produce 💫 | Inventory: 50</div>
+                <div class="log-entry">14:32:07 | Truck 3 | Ship ⚡ | Inventory: 72</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate live data updates
+        function updateLiveData() {
+            // Update truck positions
+            document.getElementById('truck1-lat').textContent = (34.0522 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck1-lng').textContent = (-118.2437 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck1-inv').textContent = Math.floor(40 + Math.random() * 20);
+            
+            document.getElementById('truck2-lat').textContent = (34.1478 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck2-lng').textContent = (-118.1445 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck2-inv').textContent = Math.floor(20 + Math.random() * 20);
+            
+            document.getElementById('truck3-lat').textContent = (33.9425 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck3-lng').textContent = (-118.4081 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('truck3-inv').textContent = Math.floor(60 + Math.random() * 20);
+            
+            // Update metrics
+            document.getElementById('msg-rate').textContent = (1.2 + Math.random() * 0.6).toFixed(1);
+            document.getElementById('mqtt-latency').textContent = Math.floor(5 + Math.random() * 10);
+            document.getElementById('queue-size').textContent = Math.floor(1 + Math.random() * 5);
+            document.getElementById('inference-time').textContent = Math.floor(30 + Math.random() * 30);
+            document.getElementById('decisions-rate').textContent = Math.floor(80 + Math.random() * 20);
+            
+            // Update counters
+            const totalMessages = parseInt(document.getElementById('total-messages').textContent.replace(',', ''));
+            document.getElementById('total-messages').textContent = (totalMessages + Math.floor(1 + Math.random() * 3)).toLocaleString();
+            
+            const totalDecisions = parseInt(document.getElementById('total-decisions').textContent);
+            document.getElementById('total-decisions').textContent = totalDecisions + Math.floor(Math.random() * 2);
+            
+            document.getElementById('avg-latency').textContent = Math.floor(40 + Math.random() * 20) + 'ms';
+            
+            // Update last action
+            const actions = ['Hold 🔄', 'Produce 💫', 'Ship ⚡'];
+            document.getElementById('last-action').textContent = actions[Math.floor(Math.random() * actions.length)];
+        }
+        
+        function addLogEntry() {
+            const log = document.getElementById('action-log');
+            const now = new Date();
+            const time = now.toTimeString().substr(0, 8);
+            const truck = Math.floor(Math.random() * 3) + 1;
+            const actions = ['Hold 🔄', 'Produce 💫', 'Ship ⚡'];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const inventory = Math.floor(20 + Math.random() * 60);
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry new';
+            entry.textContent = `${time} | Truck ${truck} | ${action} | Inventory: ${inventory}`;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Remove old entries
+            while (log.children.length > 10) {
+                log.removeChild(log.lastChild);
+            }
+            
+            // Remove 'new' class after animation
+            setTimeout(() => {
+                entry.classList.remove('new');
+            }, 500);
+        }
+        
+        // Start live updates
+        setInterval(updateLiveData, 2000);
+        setInterval(addLogEntry, 3000);
+        
+        // Initial update
+        updateLiveData();
+    </script>
+</body>
+</html>
