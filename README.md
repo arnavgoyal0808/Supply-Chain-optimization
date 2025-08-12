@@ -4,14 +4,42 @@
 
 ![Supply Chain RL](https://img.shields.io/badge/Supply%20Chain-RL%20Optimization-blue?style=for-the-badge&logo=truck)
 ![Architecture](https://img.shields.io/badge/Architecture-RL%20%2B%20IoT%20%2B%20Edge-orange?style=for-the-badge&logo=sitemap)
+![Live Demo](https://img.shields.io/badge/Demo-Live%20Animations-red?style=for-the-badge&logo=play-circle)
 ![Cost](https://img.shields.io/badge/Cost-%240-green?style=for-the-badge&logo=dollar-sign)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge&logo=check-circle)
 
-**A complete zero-cost supply chain optimization system using Reinforcement Learning, IoT simulation, and Edge Computing**
+**A complete zero-cost supply chain optimization system with LIVE animations, real-time RL decisions, and interactive visualizations**
 
-[🚀 Quick Start](#-quick-start-2-minutes) • [📖 Documentation](docs/ARCHITECTURE.md) • [🎨 Architecture](docs/SYSTEM_DIAGRAM.md) • [🔧 Setup Guide](SETUP.md)
+[🚀 Quick Start](#-quick-start-2-minutes) • [🎬 Live Demo](#-live-animated-features) • [📖 Documentation](docs/ARCHITECTURE.md) • [🎨 Architecture](docs/SYSTEM_DIAGRAM.md) • [🔧 Setup Guide](SETUP.md)
 
 </div>
+
+---
+
+## 🎬 **Live Animated Features** ⭐
+
+**NEW!** Experience real-time AI decision-making with stunning live animations:
+
+### **🎭 Interactive Visualizations**
+```bash
+# 🌐 Open interactive HTML demo with live animations
+open docs/live_architecture.html
+
+# 🎮 Run terminal live demo with real-time monitoring  
+./live_demo.sh
+
+# 📊 Access live dashboard with moving trucks
+open http://localhost:3000
+```
+
+### **✨ What You'll See Live**
+- **🚛💨 Moving Trucks**: Real GPS coordinates updating every 2 seconds
+- **📡🌊 Flowing Messages**: MQTT data streams with animated arrows  
+- **🤖⚡ RL Decisions**: AI making choices in real-time (<50ms)
+- **📊📈 Live Metrics**: Animated counters and performance indicators
+- **🗺️🔄 Interactive Map**: Smooth truck movements on Los Angeles map
+
+**🎯 [View Live Architecture Diagrams](docs/LIVE_ARCHITECTURE.md) | [See All Live Features](docs/LIVE_FEATURES.md)**
 
 ---
 
@@ -37,6 +65,9 @@ cd Supply-Chain-optimization
 
 # 3. Open your dashboard
 open http://localhost:3000
+
+# 4. 🎬 NEW: Watch live animations
+./live_demo.sh
 ```
 
 **🎉 That's it!** You'll see trucks moving on a map with real-time RL decisions.
@@ -57,7 +88,7 @@ open http://localhost:3000
 
 </div>
 
-**🔗 [View Detailed Architecture Diagrams](docs/SYSTEM_DIAGRAM.md)**
+**🔗 [View Detailed Architecture Diagrams](docs/SYSTEM_DIAGRAM.md) | [See Live Animated Architecture](docs/LIVE_ARCHITECTURE.md)**
 
 ## 📊 **Key Features**
 
@@ -84,16 +115,24 @@ open http://localhost:3000
 </tr>
 </table>
 
-## 🎮 **Live Demo**
+## 🎮 **Live Demo Experience**
 
 Once running, your dashboard will show:
 
-| Component | What You'll See |
-|-----------|----------------|
-| **🗺️ Interactive Map** | 3 trucks moving around Los Angeles in real-time |
-| **📋 Action Log** | Live feed of RL decisions: "Truck 1: Ship (Inventory: 45, Distance: 12.3km)" |
-| **📈 Status Panel** | System health: Connected services, active trucks, total actions |
-| **🔄 Real-time Updates** | Everything updates automatically every 2 seconds |
+| Component | What You'll See | Live Features |
+|-----------|----------------|---------------|
+| **🗺️ Interactive Map** | 3 trucks moving around Los Angeles | ✨ Smooth GPS animations, real-time updates |
+| **📋 Action Log** | Live feed of RL decisions | ✨ Auto-scrolling, color-coded actions |
+| **📈 Status Panel** | System health monitoring | ✨ Pulsing indicators, animated counters |
+| **🔄 Real-time Updates** | Everything updates automatically | ✨ WebSocket streams, <2s latency |
+
+### **🎬 Live Animation Examples**
+```
+🚛💨 Truck 1: (34.0522, -118.2437) → (34.0525, -118.2435) → (34.0528, -118.2433)
+📦 Inventory: 45 → 47 → 50 (Producing...)
+🤖 RL Decision: "Produce" → "Ship" → "Hold" (Real-time AI)
+📊 Dashboard: Live map updates → Action log entry → Status refresh
+```
 
 ## 🧠 **RL Environment Details**
 
@@ -118,8 +157,8 @@ We've included comprehensive monitoring tools:
 # Complete system health check
 ./check_all_services.sh
 
-# Real-time monitoring (updates every 30s)
-./monitor_system.sh
+# 🎬 NEW: Real-time live monitoring
+./live_demo.sh
 
 # Detailed health analysis
 ./health_check.sh
@@ -249,6 +288,8 @@ self.action_names = {
 
 - **[🏗️ System Architecture](docs/ARCHITECTURE.md)** - Detailed technical architecture
 - **[🎨 Visual Diagrams](docs/SYSTEM_DIAGRAM.md)** - System flow and component diagrams  
+- **[🎬 Live Architecture](docs/LIVE_ARCHITECTURE.md)** - ⭐ **NEW!** Animated architecture with live data flows
+- **[✨ Live Features](docs/LIVE_FEATURES.md)** - ⭐ **NEW!** Real-time animations and interactive elements
 - **[🔧 Setup Guide](SETUP.md)** - Step-by-step installation instructions
 - **[🏥 Service Monitoring](SERVICE_MONITORING_GUIDE.md)** - Health check and monitoring tools
 - **[🚀 Running Instructions](RUN_INSTRUCTIONS.md)** - How to start and operate the system
@@ -294,5 +335,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [![GitHub stars](https://img.shields.io/github/stars/arnavgoyal0808/Supply-Chain-optimization?style=social)](https://github.com/arnavgoyal0808/Supply-Chain-optimization/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/arnavgoyal0808/Supply-Chain-optimization?style=social)](https://github.com/arnavgoyal0808/Supply-Chain-optimization/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/arnavgoyal0808/Supply-Chain-optimization)](https://github.com/arnavgoyal0808/Supply-Chain-optimization/issues)
+
+**🎬 Experience the future of AI-powered supply chains with live animations and real-time decision making! ✨**
 
 </div>
