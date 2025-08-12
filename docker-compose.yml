@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+
+  iot-simulator:
+    build: ./iot_simulator
+    container_name: iot-simulator
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+    restart: unless-stopped
+
+  edge-agent:
+    build: ./edge_agent
+    container_name: edge-agent
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+    volumes:
+      - ./edge_agent/models:/app/models
+    restart: unless-stopped
+
+  dashboard:
+    build: ./dashboard
+    container_name: dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mosquitto
+      - edge-agent
+    environment:
+      - REACT_APP_MQTT_BROKER=ws://localhost:9001
+      - REACT_APP_EDGE_AGENT=http://localhost:8080
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
