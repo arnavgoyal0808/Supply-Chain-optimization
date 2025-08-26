@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supply Chain Optimization Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background-color: #2c3e50; color: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .card { background-color: white; border-radius: 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .truck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .truck-card { background-color: white; border-radius: 5px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .truck-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .truck-id { font-weight: bold; font-size: 18px; }
+        .truck-action { padding: 5px 10px; border-radius: 15px; font-size: 14px; }
+        .action-hold { background-color: #f1c40f; color: #000; }
+        .action-produce { background-color: #2ecc71; color: #fff; }
+        .action-ship { background-color: #3498db; color: #fff; }
+        .metric { margin: 10px 0; }
+        .metric-label { font-size: 12px; color: #7f8c8d; }
+        .metric-value { font-size: 16px; font-weight: bold; }
+        .progress-bar { height: 8px; background-color: #ecf0f1; border-radius: 4px; margin-top: 5px; }
+        .progress-fill { height: 100%; border-radius: 4px; }
+        .inventory-fill { background-color: #3498db; }
+        .fuel-fill { background-color: #e74c3c; }
+        .actions-table { width: 100%; border-collapse: collapse; }
+        .actions-table th, .actions-table td { padding: 10px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        .actions-table th { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Supply Chain Optimization Dashboard</h1>
+            <p>Real-time truck monitoring and RL-based decision making</p>
+        </div>
+        
+        <div class="card">
+            <h2>System Status</h2>
+            <div id="system-status">
+                <div style="color: green; font-weight: bold;">
+                    System Status: HEALTHY
+                </div>
+                <div style="margin-top: 10px;">
+                    <div>Truck Simulator: running</div>
+                    <div>RL Agent: running</div>
+                    <div>API Server: running</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Truck Fleet</h2>
+            <div id="truck-grid" class="truck-grid"></div>
+        </div>
+        
+        <div class="card">
+            <h2>Recent RL Actions</h2>
+            <div id="actions-log">
+                <table class="actions-table">
+                    <thead>
+                        <tr>
+                            <th>Truck</th>
+                            <th>Action</th>
+                            <th>Inventory</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="actions-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Truck data simulation
+        const truckIds = ["Truck-A", "Truck-B", "Truck-C"];
+        let truckData = [];
+        let rlActions = [];
+        
+        // Generate random truck data
+        function generateTruckData() {
+            truckData = [];
+            
+            for (const truckId of truckIds) {
+                // Simulate truck movement
+                const lat = 34.0 + (Math.random() * 0.2 - 0.1);
+                const lng = -118.2 + (Math.random() * 0.2 - 0.1);
+                
+                // Simulate inventory and other metrics
+                const inventory = Math.floor(Math.random() * 80) + 10;
+                const fuel = Math.floor(Math.random() * 70) + 30;
+                
+                truckData.push({
+                    id: truckId,
+                    lat: lat,
+                    lng: lng,
+                    inventory: inventory,
+                    fuel: fuel,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            updateTruckDisplay();
+        }
+        
+        // Simulate RL agent decisions
+        function simulateRLAgent() {
+            for (const truck of truckData) {
+                // Simple rule-based logic
+                const inventory = truck.inventory;
+                let action;
+                
+                if (inventory < 30) {
+                    action = "Produce";
+                } else if (inventory > 70) {
+                    action = "Ship";
+                } else {
+                    action = "Hold";
+                }
+                
+                // Record the action
+                rlActions.push({
+                    truck_id: truck.id,
+                    action: action,
+                    inventory: inventory,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            // Keep only the last 20 actions
+            if (rlActions.length > 20) {
+                rlActions = rlActions.slice(-20);
+            }
+            
+            updateActionsDisplay();
+        }
+        
+        // Update truck display
+        function updateTruckDisplay() {
+            const truckGrid = document.getElementById('truck-grid');
+            truckGrid.innerHTML = '';
+            
+            for (const truck of truckData) {
+                const truckCard = document.createElement('div');
+                truckCard.className = 'truck-card';
+                
+                // Get the latest action for this truck
+                const latestAction = rlActions
+                    .filter(a => a.truck_id === truck.id)
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+                
+                let actionClass = 'action-hold';
+                let actionText = 'Hold';
+                
+                if (latestAction) {
+                    actionText = latestAction.action;
+                    if (actionText === 'Produce') {
+                        actionClass = 'action-produce';
+                    } else if (actionText === 'Ship') {
+                        actionClass = 'action-ship';
+                    }
+                }
+                
+                truckCard.innerHTML = `
+                    <div class="truck-header">
+                        <div class="truck-id">${truck.id}</div>
+                        <div class="truck-action ${actionClass}">${actionText}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Inventory Level</div>
+                        <div class="metric-value">${truck.inventory}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill inventory-fill" style="width: ${truck.inventory}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Fuel Level</div>
+                        <div class="metric-value">${truck.fuel}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fuel-fill" style="width: ${truck.fuel}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Location</div>
+                        <div class="metric-value">Lat: ${truck.lat.toFixed(4)}, Lng: ${truck.lng.toFixed(4)}</div>
+                    </div>
+                `;
+                
+                truckGrid.appendChild(truckCard);
+            }
+        }
+        
+        // Update actions display
+        function updateActionsDisplay() {
+            const actionsTbody = document.getElementById('actions-tbody');
+            actionsTbody.innerHTML = '';
+            
+            // Sort by timestamp descending
+            const sortedActions = [...rlActions].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            for (const action of sortedActions) {
+                const row = document.createElement('tr');
+                const time = new Date(action.timestamp);
+                const timeStr = time.toLocaleTimeString();
+                
+                row.innerHTML = `
+                    <td>${action.truck_id}</td>
+                    <td>${action.action}</td>
+                    <td>${action.inventory}%</td>
+                    <td>${timeStr}</td>
+                `;
+                
+                actionsTbody.appendChild(row);
+            }
+        }
+        
+        // Run simulation
+        function runSimulation() {
+            generateTruckData();
+            simulateRLAgent();
+        }
+        
+        // Initial run
+        runSimulation();
+        
+        // Update periodically
+        setInterval(runSimulation, 2000);
+    </script>
+</body>
+</html>
